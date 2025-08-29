@@ -36,72 +36,11 @@ function draw() {
   scale(1,-1);
   drawAxis();
  
-
-  // Unit Circle
-  noFill();
-  stroke('gray');
-  circle(0,0,R*2*S);
-
-  // Point on Circle
-  px = P.x * S;
-  py = P.y * S;
-  fill('red');
-  circle(px, py, 10);
-  stroke('red');
-  line(0,0,px,py);
-
-  // Line from the Point 
-  push()
-  noFill();
-  strokeWeight(2);
-  drawingContext.setLineDash([5, 5]);
-  stroke('red');
-  line(px,py,px,0);
-
-  pop();
-
+  // Unit Circle + Point + Line
+  let px, py = drawUnitCircle();
+  
   // Sine Wave
-
-  // --- store (theta, y) ---
-  if (running) {
-    history.push({ theta, y: P.y });
-    while (history.length && history[history.length - 1].theta - history[0].theta > THETA_SPAN) {
-      history.shift();
-    }
-  }
-
-  // --- draw sine wave y vs θ with NEWEST at the LEFT ---
-const waveW = THETA_SPAN * X_PER_RAD;
-const thetaLatest = history.length ? history[history.length - 1].theta : theta;
-
-// θ ticks to the right: 0, π/2, π, 3π/2, 2π away from newest
-stroke(100);
-for (const t of [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI]) {
-  const xTick = t * X_PER_RAD;              // distance from newest
-  if (xTick <= waveW) line(xTick, -6, xTick, 6);
-}
-
-// polyline: map each stored sample by distance from newest
-noFill();
-stroke(0, 100, 255); strokeWeight(2);
-beginShape();
-//for (const s of history) {
-for (let i = history.length - 1; i >= 0; i--) {
-  const s = history[i];
-  const xPix = (thetaLatest - s.theta) * X_PER_RAD;  // newest at 0
-  if (xPix >= 0 && xPix <= waveW) {
-    vertex(xPix, s.y * S);
-  }
-}
-endShape();
-
-  // live dot
-  if (history.length) {
-    const s = history[history.length - 1];
-    const xPix = (s.theta - thetaLatest) * X_PER_RAD;
-    const yPix = s.y * S;
-    stroke(255, 0, 0); strokeWeight(6); point(xPix, yPix);
-  }
+  drawSineWave(px, py);
 
   // Update for next frame
   if (running) {
@@ -150,4 +89,77 @@ function setTitle() {
   textAlign(CENTER, TOP);
   textSize(30);
   text("Unit Circle • y = sin(θ)", 0, -height/2 + 14);
+}
+
+function drawUnitCircle() {
+
+  // Unit Circle
+  noFill();
+  stroke('gray');
+  circle(0,0,R*2*S);
+
+  // Point on Circle
+  px = P.x * S;
+  py = P.y * S;
+  fill('red');
+  circle(px, py, 10);
+  stroke('red');
+  line(0,0,px,py);
+
+  // Line from the Point 
+  push()
+  noFill();
+  strokeWeight(2);
+  drawingContext.setLineDash([5, 5]);
+  stroke('red');
+  line(px,py,px,0);
+  line(px,py,0,py);
+  pop();
+  return {x: px, y: py};
+}
+
+function drawSineWave(px, py) {
+ // Sine Wave
+
+  // --- store (theta, y) ---
+  if (running) {
+    history.push({ theta, y: P.y });
+    while (history.length && history[history.length - 1].theta - history[0].theta > THETA_SPAN) {
+      history.shift();
+    }
+  }
+
+  // --- draw sine wave y vs θ with NEWEST at the LEFT ---
+const waveW = THETA_SPAN * X_PER_RAD;
+const thetaLatest = history.length ? history[history.length - 1].theta : theta;
+
+// θ ticks to the right: 0, π/2, π, 3π/2, 2π away from newest
+stroke(100);
+for (const t of [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI]) {
+  const xTick = t * X_PER_RAD;              // distance from newest
+  if (xTick <= waveW) line(xTick, -6, xTick, 6);
+}
+
+// polyline: map each stored sample by distance from newest
+noFill();
+stroke(0, 100, 255); strokeWeight(2);
+beginShape();
+//for (const s of history) {
+for (let i = history.length - 1; i >= 0; i--) {
+  const s = history[i];
+  const xPix = (thetaLatest - s.theta) * X_PER_RAD;  // newest at 0
+  if (xPix >= 0 && xPix <= waveW) {
+    vertex(xPix, s.y * S);
+  }
+}
+endShape();
+
+// live dot
+  if (history.length) {
+    const s = history[history.length - 1];
+    const xPix = (s.theta - thetaLatest) * X_PER_RAD;
+    const yPix = s.y * S;
+    stroke(255, 0, 0); strokeWeight(6); point(xPix, yPix);
+  }
+
 }
