@@ -66,14 +66,12 @@ function draw() {
 
 function drawAxis() {
   const TOP_MARGIN = 70;
-  stroke(0);
+  stroke('lightgray');
   strokeWeight(2);
   line(-width/2, 0, width/2, 0);
   line(0,-height/2,0,height/2-TOP_MARGIN); 
 
-
 // --- Δθ axis ticks and labels (newest at left, Δθ=0) ---
-
 const waveW = THETA_SPAN * X_PER_RAD;
 const tickStep = Math.PI / 2;  // tick spacing = π/2 rad
 const numTicks = Math.floor(THETA_SPAN / tickStep);
@@ -93,12 +91,11 @@ for (let k = 0; k <= numTicks; k++) {
   else if (k === 2) lbl = 'Δθ=π';
   else if (k === 3) lbl = 'Δθ=3π/2';
   else if (k === 4) lbl = 'Δθ=2π';
-  // extend this if you want more cycles
 
   // draw the label (in screen coords, so flip back)
   push();
   scale(1, -1);
-  fill(0);
+  fill('grey');
   noStroke();
   textSize(14);
   textAlign(CENTER, TOP);
@@ -123,7 +120,6 @@ function animationButton(cnvX, cnvY) {
   button.mouseOver(() => button.style('background-color', '#b4049dff'));
   button.mouseOut(() => button.style('background-color', '#c104faff'));
 
-
   button.position(width-12, 100);
   button.mousePressed(() => {
     running = !running;
@@ -144,9 +140,30 @@ function drawUnitCircle() {
   // Unit Circle
   push();
   noFill();
-  stroke('gray');
+  stroke(0);
   circle(0,0,R*2*S);
   pop();
+
+  const angles = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
+  const angleLabels = ['2π','π/4', 'π/2', '3π/4', 'π', '3π/4', '3π/2', '7π/4'];
+  angles.forEach((angle, index) => {
+    const x = R * Math.cos(angle) * S;
+    const y = R * Math.sin(angle) * S;
+    push();
+    stroke(0);
+    strokeWeight(1);
+    line(x*0.98, y*0.98, x*1.01, y*1.01);
+    pop();
+    push();
+    scale(1, -1); // flip back for text
+    fill(0);
+    noStroke();
+    textSize(14);
+    textAlign(CENTER, CENTER);
+    text(angleLabels[index], x*1.1, -y*1.1);
+    pop();
+  });
+
 
   px = P.x * S;
   py = P.y * S;
@@ -189,14 +206,12 @@ function drawUnitCircle() {
   pop();
 
   // Point 2 on Circle
-
   push();
   fill('teal');
   circle(px2, py2, 10);
   stroke('teal');
   line(0,0,px2,py2);
   pop();
-
   return {x: px, y: py};
 }
 
@@ -243,6 +258,5 @@ for (let i = history.length - 1; i >= 0; i--) {
   }
 }
 endShape();
-
 
 }
