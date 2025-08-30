@@ -1,18 +1,21 @@
 theta = 0;
+theta2 = Math.PI/2;
 let dtheta = 0.01;
 let R = 1;
+
 let P = {x:1, y:0};
+
+let P2 = {x:0, y:1};
+
 let S = 200;
 let W = 1400;
 let H = 800;
 let button = null;
 let running = true;
 
-
 const X_PER_RAD = 120; 
 let history = [];        // store {theta, y}
 const THETA_SPAN = 2 * Math.PI; // show one full cycle
-
 
 const cosd = Math.cos(dtheta);
 const sind = Math.sin(dtheta);
@@ -25,14 +28,12 @@ function setup() {
   let cnv_x = (windowWidth - width) / 4;
   let cnv_y = (windowHeight - height) / 2;
   cnv.position(cnv_x, cnv_y);
-
   animationButton(cnv_x, cnv_y);
 }
 
 function draw() {
-  background(220);
+  background('white');
   translate(width/2,height/2);
-  setTitle();
   scale(1,-1);
   drawAxis();
  
@@ -40,23 +41,70 @@ function draw() {
   let px, py = drawUnitCircle();
   
   // Sine Wave
-  drawSineWave(px, py);
+  drawSineCosineWave(px, py);
 
   // Update for next frame
   if (running) {
     theta += dtheta;
+    theta2 += dtheta;
+    
     xNew = P.x * cosd - P.y * sind;
     yNew = P.x * sind + P.y * cosd; 
     P.x = xNew;
     P.y = yNew;
-    }
+    
+    xNew2 = P2.x * cosd - P2.y * sind;
+    yNew2 = P2.x * sind + P2.y * cosd; 
+    P2.x = xNew2;
+    P2.y = yNew2;
+  }
+  push();
+  scale(1, -1);  // undo the flipped canvas for text
+  setTitle();
+  pop();
 }
 
-function drawAxis(){
+function drawAxis() {
+  const TOP_MARGIN = 70;
   stroke(0);
   strokeWeight(2);
   line(-width/2, 0, width/2, 0);
-  line(0,-height,0,height); 
+  line(0,-height/2,0,height/2-TOP_MARGIN); 
+
+
+// --- Δθ axis ticks and labels (newest at left, Δθ=0) ---
+
+const waveW = THETA_SPAN * X_PER_RAD;
+const tickStep = Math.PI / 2;  // tick spacing = π/2 rad
+const numTicks = Math.floor(THETA_SPAN / tickStep);
+
+for (let k = 0; k <= numTicks; k++) {
+  const dTheta = k * tickStep;
+  const xTick = dTheta * X_PER_RAD;
+  if (xTick > waveW) continue;
+
+  // draw tick mark
+  line(xTick, -6, xTick, 6);
+
+  // label text
+  let lbl = '';
+  if (k === 0) lbl = 'Δθ=0';
+  else if (k === 1) lbl = 'Δθ=π/2';
+  else if (k === 2) lbl = 'Δθ=π';
+  else if (k === 3) lbl = 'Δθ=3π/2';
+  else if (k === 4) lbl = 'Δθ=2π';
+  // extend this if you want more cycles
+
+  // draw the label (in screen coords, so flip back)
+  push();
+  scale(1, -1);
+  fill(0);
+  noStroke();
+  textSize(14);
+  textAlign(CENTER, TOP);
+  text(lbl, xTick, 10);  // a little below the axis
+  pop();
+}
 }
 
 function animationButton(cnvX, cnvY) {
@@ -76,7 +124,7 @@ function animationButton(cnvX, cnvY) {
   button.mouseOut(() => button.style('background-color', '#c104faff'));
 
 
-  button.position(cnvX+12, cnvY+12);
+  button.position(width-12, 100);
   button.mousePressed(() => {
     running = !running;
     button.html(running ? '⏸ Pause' : '▶ Start');
@@ -88,78 +136,113 @@ function setTitle() {
   noStroke();
   textAlign(CENTER, TOP);
   textSize(30);
-  text("Unit Circle • y = sin(θ)", 0, -height/2 + 14);
+  text("sin(θ) & cos(θ)\nUnit Circle", 0, -height/2);
 }
 
 function drawUnitCircle() {
 
   // Unit Circle
+  push();
   noFill();
   stroke('gray');
   circle(0,0,R*2*S);
+  pop();
 
-  // Point on Circle
   px = P.x * S;
   py = P.y * S;
-  fill('red');
-  circle(px, py, 10);
-  stroke('red');
-  line(0,0,px,py);
 
-  // Line from the Point 
+  px2 = P2.x * S;
+  py2 = P2.y * S;
+
+  // Sine perpendicular from the Point 
   push()
   noFill();
   strokeWeight(2);
   drawingContext.setLineDash([5, 5]);
-  stroke('red');
+  // perpendicular line to x-axis
+  stroke('purple');
   line(px,py,px,0);
+  // perpendicular line to y-axis
+  stroke('purple');
   line(px,py,0,py);
   pop();
+
+  // Sine perpendicular from the Point 
+  push()
+  noFill();
+  strokeWeight(2);
+  drawingContext.setLineDash([5, 5]);
+  // perpendicular line to x-axis
+  stroke('teal');
+  line(px2,py2,px2,0);
+  // perpendicular line to y-axis
+  stroke('teal');
+  line(px2,py2,0,py2);
+  pop();
+
+  // Point on Circle for Sine
+  push();
+  fill('purple');
+  circle(px, py, 10);
+  stroke('purple');
+  line(0,0,px,py);
+  pop();
+
+  // Point 2 on Circle
+
+  push();
+  fill('teal');
+  circle(px2, py2, 10);
+  stroke('teal');
+  line(0,0,px2,py2);
+  pop();
+
   return {x: px, y: py};
 }
 
-function drawSineWave(px, py) {
- // Sine Wave
-
-  // --- store (theta, y) ---
+function drawSineCosineWave(px, py) {
+//   // --- store (theta, y, x) ---
   if (running) {
-    history.push({ theta, y: P.y });
+    history.push({ theta, y: P.y, x: P.x });
     while (history.length && history[history.length - 1].theta - history[0].theta > THETA_SPAN) {
       history.shift();
     }
   }
 
-  // --- draw sine wave y vs θ with NEWEST at the LEFT ---
+// θ with NEWEST at the LEFT ---
 const waveW = THETA_SPAN * X_PER_RAD;
 const thetaLatest = history.length ? history[history.length - 1].theta : theta;
 
-// θ ticks to the right: 0, π/2, π, 3π/2, 2π away from newest
-stroke(100);
-for (const t of [0, Math.PI/2, Math.PI, 3*Math.PI/2, 2*Math.PI]) {
-  const xTick = t * X_PER_RAD;              // distance from newest
-  if (xTick <= waveW) line(xTick, -6, xTick, 6);
-}
+// Code to draw waves
 
-// polyline: map each stored sample by distance from newest
+// polyline: for sine Wave
 noFill();
-stroke(0, 100, 255); strokeWeight(2);
+stroke('purple'); 
+strokeWeight(2);
 beginShape();
-//for (const s of history) {
 for (let i = history.length - 1; i >= 0; i--) {
   const s = history[i];
   const xPix = (thetaLatest - s.theta) * X_PER_RAD;  // newest at 0
+
   if (xPix >= 0 && xPix <= waveW) {
     vertex(xPix, s.y * S);
   }
 }
 endShape();
 
-// live dot
-  if (history.length) {
-    const s = history[history.length - 1];
-    const xPix = (s.theta - thetaLatest) * X_PER_RAD;
-    const yPix = s.y * S;
-    stroke(255, 0, 0); strokeWeight(6); point(xPix, yPix);
+// polyline: for cosine wave
+noFill();
+stroke('teal'); 
+strokeWeight(3);
+beginShape();
+for (let i = history.length - 1; i >= 0; i--) {
+  const s = history[i];
+  const xPix = (thetaLatest - s.theta) * X_PER_RAD;  // newest at 0
+  if (xPix >= 0 && xPix <= waveW) {
+    vertex(xPix, s.x * S);
   }
+}
+endShape();
+
 
 }
