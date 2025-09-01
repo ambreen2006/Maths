@@ -24,18 +24,25 @@ function setup() {
   lineHeight = height/2 - CANVAS_TOP_MARGIN;
   cnv.position(cnv_x, cnv_y);
 
-  let button_x = CANVAS_WIDTH - 100;
-  let button_y = CANVAS_TOP_MARGIN + 60;
+  // let button_x = CANVAS_WIDTH - 100;
+  // let button_y = CANVAS_TOP_MARGIN + 60;
 
-  let label_x = button_x - 250;
-  let label_y = button_y + 60;
+  let button_x = 100;
+  let button_y = 60;
 
-  let slider_x = button_x - 150;
-  let slider_y = label_y + 60;
+  let slider_x = 60;
+  let slider_y = 160;
   
   runningButton = animationButton(cnv_x, cnv_y, reset, {x: button_y, y: button_y}); 
   console.log("button ",runningButton);
-  
+
+  // label under the slider
+  nLinesLabel = createDiv("");
+  nLinesLabel.style('color', 'rgba(0, 0, 0, 1)');
+  nLinesLabel.style('font-family', 'system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial');
+  nLinesLabel.style('font-size', '20px');
+  updateNLinesLabel();
+
   nLinesSlider = createSlider(2, 10, 5, 1);
   nLinesSlider.position(slider_x, slider_y);
   nLinesSlider.input(() => {
@@ -43,15 +50,22 @@ function setup() {
     reset();
   });
 
-  // label under the slider
-  nLinesLabel = createDiv("");
-  nLinesLabel.style('color', 'rgba(0, 0, 0, 1)');
-  nLinesLabel.style('font-family', 'system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial');
-  nLinesLabel.style('font-size', '20px');
-  nLinesLabel.position(label_x, label_y); 
+}
 
-  nLinesLabel.html("Number of Steps 2^N: N=" + N);   
+function updateNLinesLabel() {
+  push();
+  const txt = `Draw 2^${N} lines & rotations`;
+  textSize(14);             
+  const tw = textWidth(txt);
+  //const rightX = CANVAS_WIDTH - 100;
 
+  // position div so that its right edge aligns
+  const x = 60;
+  const y = 120;              // 28px below slider, tweak as needed
+
+  nLinesLabel.position(x, y);
+  nLinesLabel.html(txt);
+  pop();
 }
 
 function draw() {
@@ -93,7 +107,7 @@ function reset() {
   deltaTheta = (Math.PI/2)/nLines;
   revealEveryNFrames = 10/nLines;
   
-  nLinesLabel.html("Number of Steps 2^N: N=" + N);
+  updateNLinesLabel();
 }
 
 function drawCircle() {
