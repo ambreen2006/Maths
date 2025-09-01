@@ -24,7 +24,7 @@ function setup() {
   lineHeight = height/2 - CANVAS_TOP_MARGIN;
   cnv.position(cnv_x, cnv_y);
 
-  let button_x = CANVAS_WIDTH;
+  let button_x = CANVAS_WIDTH - 100;
   let button_y = CANVAS_TOP_MARGIN + 60;
 
   let label_x = button_x - 250;

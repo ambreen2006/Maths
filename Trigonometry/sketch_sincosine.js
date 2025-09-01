@@ -29,7 +29,7 @@ function setup() {
   let cnv_x = (windowWidth - width) / 4;
   let cnv_y = (windowHeight - height) / 2;
   cnv.position(cnv_x, cnv_y);
-  let button_x = CANVAS_WIDTH;
+  let button_x = CANVAS_WIDTH -100;
   let button_y = CANVAS_TOP_MARGIN + 60;
   animationButton(cnv_x, cnv_y, null, {x: button_x, y: button_y});
 }
