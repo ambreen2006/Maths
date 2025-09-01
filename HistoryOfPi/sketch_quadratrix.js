@@ -3,7 +3,7 @@ import { adjustGridSystem, animationButton, running, setFinished } from '../Comm
 
 const R = 300;
 
-let N = 2;
+let N = 5;
 let nLines = 2**N;
 let steps = R/nLines;
 let deltaTheta = (Math.PI/2)/nLines;
@@ -24,9 +24,6 @@ function setup() {
   lineHeight = height/2 - CANVAS_TOP_MARGIN;
   cnv.position(cnv_x, cnv_y);
 
-  // let button_x = CANVAS_WIDTH - 100;
-  // let button_y = CANVAS_TOP_MARGIN + 60;
-
   let button_x = 100;
   let button_y = 60;
 
@@ -43,7 +40,7 @@ function setup() {
   nLinesLabel.style('font-size', '20px');
   updateNLinesLabel();
 
-  nLinesSlider = createSlider(2, 10, 5, 1);
+  nLinesSlider = createSlider(2, 10, N, 1);
   nLinesSlider.position(slider_x, slider_y);
   nLinesSlider.input(() => {
     N = nLinesSlider.value();
