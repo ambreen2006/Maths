@@ -1,5 +1,8 @@
-theta = 0;
-theta2 = Math.PI/2;
+import { adjustGridSystem, animationButton, running, button, setFinished } from '../Common/common.js';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_TOP_MARGIN } from '../Common/constants.js'; 
+
+let theta = 0;
+let theta2 = Math.PI/2;
 let dtheta = 0.01;
 let R = 1;
 
@@ -10,8 +13,8 @@ let P2 = {x:0, y:1};
 let S = 200;
 let W = 1400;
 let H = 800;
-let button = null;
-let running = true;
+// let button = null;
+// let running = true;
 
 const X_PER_RAD = 120; 
 let history = [];        // store {theta, y}
@@ -28,7 +31,7 @@ function setup() {
   let cnv_x = (windowWidth - width) / 4;
   let cnv_y = (windowHeight - height) / 2;
   cnv.position(cnv_x, cnv_y);
-  animationButton(cnv_x, cnv_y);
+  animationButton(cnv_x, cnv_y, null);
 }
 
 function draw() {
@@ -48,13 +51,13 @@ function draw() {
     theta += dtheta;
     theta2 += dtheta;
     
-    xNew = P.x * cosd - P.y * sind;
-    yNew = P.x * sind + P.y * cosd; 
+    let xNew = P.x * cosd - P.y * sind;
+    let yNew = P.x * sind + P.y * cosd; 
     P.x = xNew;
     P.y = yNew;
     
-    xNew2 = P2.x * cosd - P2.y * sind;
-    yNew2 = P2.x * sind + P2.y * cosd; 
+    let xNew2 = P2.x * cosd - P2.y * sind;
+    let yNew2 = P2.x * sind + P2.y * cosd; 
     P2.x = xNew2;
     P2.y = yNew2;
   }
@@ -104,28 +107,28 @@ for (let k = 0; k <= numTicks; k++) {
 }
 }
 
-function animationButton(cnvX, cnvY) {
-  button = createButton('⏸ Pause');
+// function animationButton(cnvX, cnvY) {
+//   button = createButton('⏸ Pause');
 
-  button.style('padding', '10px 20px');
-  button.style('font-size', '16px');
-  button.style('border', 'none');
-  button.style('border-radius', '8px');
-  button.style('background-color', '#c104faff'); // green
-  button.style('color', 'white');
-  button.style('cursor', 'pointer');
-  button.style('box-shadow', '2px 2px 6px rgba(0,0,0,0.3)');
+//   button.style('padding', '10px 20px');
+//   button.style('font-size', '16px');
+//   button.style('border', 'none');
+//   button.style('border-radius', '8px');
+//   button.style('background-color', '#c104faff'); // green
+//   button.style('color', 'white');
+//   button.style('cursor', 'pointer');
+//   button.style('box-shadow', '2px 2px 6px rgba(0,0,0,0.3)');
 
-   // hover effect
-  button.mouseOver(() => button.style('background-color', '#b4049dff'));
-  button.mouseOut(() => button.style('background-color', '#c104faff'));
+//    // hover effect
+//   button.mouseOver(() => button.style('background-color', '#b4049dff'));
+//   button.mouseOut(() => button.style('background-color', '#c104faff'));
 
-  button.position(width-12, 100);
-  button.mousePressed(() => {
-    running = !running;
-    button.html(running ? '⏸ Pause' : '▶ Start');
-  });
-}
+//   button.position(width-12, 100);
+//   button.mousePressed(() => {
+//     running = !running;
+//     button.html(running ? '⏸ Pause' : '▶ Start');
+//   });
+// }
 
 function setTitle() {
   fill(0);
@@ -165,11 +168,11 @@ function drawUnitCircle() {
   });
 
 
-  px = P.x * S;
-  py = P.y * S;
+  let px = P.x * S;
+  let py = P.y * S;
 
-  px2 = P2.x * S;
-  py2 = P2.y * S;
+  let px2 = P2.x * S;
+  let py2 = P2.y * S;
 
   // Sine perpendicular from the Point 
   push()
@@ -260,3 +263,6 @@ for (let i = history.length - 1; i >= 0; i--) {
 endShape();
 
 }
+
+window.setup = setup;
+window.draw = draw;
