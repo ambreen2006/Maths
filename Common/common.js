@@ -1,7 +1,6 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_TOP_MARGIN } from './constants.js'; 
 
 export let running = true;
-export let button;
 
 let finished = false;
 
@@ -10,7 +9,8 @@ export function adjustGridSystem() {
   scale(1, -1);
 }
 
-export function animationButton(cnvX, cnvY, resetFn) {
+export function animationButton(cnvX, cnvY, resetFn, button_pos) {
+  let button;
   button = createButton('⏸ Pause');
   button.style('padding', '10px 20px');
   button.style('font-size', '16px');
@@ -25,7 +25,6 @@ export function animationButton(cnvX, cnvY, resetFn) {
   button.mouseOver(() => button.style('background-color', '#b4049dff'));
   button.mouseOut(() => button.style('background-color', '#c104faff'));
 
-  button.position(width-100, 100);
   button.mousePressed(() => {
     if (finished) {
       if(resetFn) resetFn();
@@ -34,9 +33,12 @@ export function animationButton(cnvX, cnvY, resetFn) {
     running = !running;
     button.html(running ? '⏸ Pause' : '▶ Start');
   });
+
+  button.position(button_pos.x, button_pos.y);
+  return button;
 }
 
-export function setFinished(value) {
+export function setFinished(value, button) {
   finished = value;
   running = false;
   if (button) {

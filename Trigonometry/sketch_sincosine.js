@@ -1,4 +1,4 @@
-import { adjustGridSystem, animationButton, running, button, setFinished } from '../Common/common.js';
+import { adjustGridSystem, animationButton, running, setFinished } from '../Common/common.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_TOP_MARGIN } from '../Common/constants.js'; 
 
 let theta = 0;
@@ -13,8 +13,6 @@ let P2 = {x:0, y:1};
 let S = 200;
 let W = 1400;
 let H = 800;
-// let button = null;
-// let running = true;
 
 const X_PER_RAD = 120; 
 let history = [];        // store {theta, y}
@@ -31,7 +29,9 @@ function setup() {
   let cnv_x = (windowWidth - width) / 4;
   let cnv_y = (windowHeight - height) / 2;
   cnv.position(cnv_x, cnv_y);
-  animationButton(cnv_x, cnv_y, null);
+  let button_x = CANVAS_WIDTH;
+  let button_y = CANVAS_TOP_MARGIN + 60;
+  animationButton(cnv_x, cnv_y, null, {x: button_x, y: button_y});
 }
 
 function draw() {
